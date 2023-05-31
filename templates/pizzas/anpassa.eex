@@ -1,0 +1,41 @@
+<%# om man kommer hit ska man ska man anpassa grundinstälningarna baserat på parametrarna i urlen databasen med parametrarna i urlen. 
+sedan ska man här kunna sjicka en uppdaterad pizza i urlen till kundvagnen där de sätts in i databasen och man kan signera dem med sitt namn. %>
+
+<% clean_order = Map.delete(Enum.at(order,0), "id") %>
+<% ingredient_list = Enum.at(order,1) %>
+<% order_ids = Enum.map(clean_order, fn i -> elem(i,1) end) %>
+
+<div id="anp-container">
+
+    <form id="adjust_form" action="/pizzas/1/edit" method="POST">
+        <%= for index <- 1..(length(ingredient_list)-2) do %>
+
+            <%= if Enum.member?(order_ids, Integer.to_string(index)) do %>
+                <div class="option">
+                    <label for="<%= Enum.at(ingredient_list,index-1) %>"><%= Enum.at(ingredient_list,index-1) %></label>
+                    <input type="number" min="0" name="<%= index %>" id="<%= Enum.at(ingredient_list,index-1) %>" value="1">
+                </div>
+            <% else %>
+                <div class="option">
+                    <label for="<%= Enum.at(ingredient_list,index-1) %>"><%= Enum.at(ingredient_list,index-1) %></label>
+                    <input type="number" min="0" name="<%= index %>" id="<%= Enum.at(ingredient_list,index-1) %>" value="0">
+                </div>
+            <% end %>
+
+        <% end %>
+
+        <div class="bottom-divs">
+            <label for="family_size">family size</label>
+            <input type="checkbox" min="1" name="16" id="family_size" value="1">
+        </div>
+
+        <div class="bottom-divs">
+            <label for="gluten_free">gluten free</label>
+            <input type="checkbox" min="1" name="17" id="gluten_free" value="1">
+        </div>
+
+        <div class="bottom-divs">
+            <input type="submit" value="Order" id="submit-anp">
+        </div>
+    </form>
+</div>

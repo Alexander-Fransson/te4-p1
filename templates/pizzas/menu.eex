@@ -1,0 +1,41 @@
+<div class="container">
+    
+    <div class="header">
+        <div class="spacer"></div>
+        <img class="logo" src="/uploads/tonys-pizza-logo.svg">
+        <a href="/kundvagn"><img class="basket" src="/uploads/tonys-pizza-basket.svg"></a>
+    </div>
+
+    <div class="menu">
+        <%= for pizza_list <- Enum.reverse(pizzas) do %>
+            <form action="/kundvagn">
+            <section>
+                <input type="hidden" name="pizza" value="<%=to_string(Enum.at(Enum.at(pizza_list,0),0))%>"/>
+
+                <img class="image" src=<%= to_string(Enum.at(Enum.at(pizza_list,0),2)) %>>
+                <ul>
+                    <li><strong><%= Enum.at(Enum.at(pizza_list, 0),1) %></strong></li>
+                    <%= for pizza <- pizza_list do %>
+                        <% [_p_id,_name,_img, i_id, toppings] = pizza %>
+                            <input type="hidden" name="<%= toppings %>" value="<%=to_string(i_id) %>"/>
+                            <li><%= toppings %></li>
+                    <% end %>
+
+                <div class="buttons">
+                    <input type="submit" value="anpassa" form="<%="form_#{Enum.at(Enum.at(pizza_list,0),0)}" %>"/>
+                    <input class="button_köp" type="submit" value="köp">
+                </div>
+                </ul>
+                
+            </section>
+            </form>
+
+            <form class="hidden_form" action="<%= "/pizzas/#{Enum.at(Enum.at(pizza_list,0),0)}/edit"%>" id="<%="form_#{Enum.at(Enum.at(pizza_list,0),0)}" %>">
+                <%= for pizza <- pizza_list do %>
+                    <% [_p_id,_name,_img, i_id, toppings] = pizza %>
+                        <input type="hidden" name="<%= toppings %>" value="<%=to_string(i_id) %>"/>
+                <% end %>
+            </form>
+        <% end %>
+    </div>
+</div>

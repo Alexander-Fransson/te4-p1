@@ -1,0 +1,54 @@
+<h1>Welcome to the admin page! (/admin)</h1>
+
+<h2>Orders:</h2>
+
+<% defmodule Admin do %>
+
+  <% def change?(head, []) do %>
+    <%= head.ingredient %> - <%= head.customer_name %>
+
+    <%= order_ready(head) %>
+    
+  <% end %>
+
+  <% def change?(head, tail) do %>
+    <%= if head.order_id == hd(tail).order_id do %>
+      <%= head.ingredient %>
+    <% else %>
+      <%= head.ingredient %> - <%= head.customer_name %> 
+
+    <%= order_ready(head) %>
+
+      <br> <br>
+       
+    <% end %>
+    <% [newHead | newTail] = tail %>
+    <%= change?(newHead, newTail) %>
+  <% end %>
+
+
+
+
+  <% def order_ready(head) do %>
+    <%= if head.pizza_done do %>
+      - Order is ready to be picked up!
+      <form id="OrderPickup" action="/admin/<%=head.order_id%>/delete" method="POST">
+	      <button type=submit>Order picked up</button>
+      </form>
+    <% else %>
+      <form id="OrderReady" action="/admin/<%=head.order_id%>/order_ready" method="POST">
+	      <button type=submit>Order ready</button>
+      </form> 
+    <% end %>
+  <% end %>
+
+
+
+<% end %>
+
+<%= if not Enum.empty?(orders) do %>
+  <% [h | t] = orders %>
+  <p><%= Admin.change?(h, t) %></p>
+<% else %>
+  <p>No orders :(</p>
+<% end %>

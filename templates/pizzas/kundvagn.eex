@@ -1,0 +1,38 @@
+<%# När denhär sidan laddas ska parametrarna i urlen sättas in i dbn
+här ska man även kunns signera sina ordrar. %>
+
+<h1>kundvagns sida</h1>
+
+<div id="kundvagns_container">
+    <div id="orders_container">
+
+    <%= for order <- Enum.reverse(my_pizzas) do %>
+        <%= if Enum.at(order,0) != nil do %>
+            <article class="order_container">
+
+                <div class="order_number">
+                    <strong> order number: <%=Enum.at(Enum.at(order,0),0)%> </strong>
+                </div>
+
+                <img src="<%= to_string(Postgrex.query!(DB, "SELECT DISTINCT pizzas.image FROM orders JOIN pizzas ON orders.p_id = pizzas.id WHERE order_id = $1", [Enum.at(Enum.at(order,0),0)], pool: DBConnection.ConnectionPool).rows)%>" class="order_img" >
+                
+                <ul class="order_ingredients">
+                    <%= for index <- order do %>
+                        <li><%= Enum.at(index,1) %></li>
+                    <% end %>
+
+                    <%= if Enum.at(order,0) != nil do %>
+                        <%= if Enum.at(Enum.at(order,0),-1) == true do %>
+                                <p class="pizza_done">Klar att hämtas</p>
+                            <% else %>
+                                <p class="pizza_not_done">Tillagas</p>
+                        <% end %>
+                    <% end %>
+                </ul>
+
+            </article>
+        <%end %>
+    <% end %>
+
+    </div>
+</div>
